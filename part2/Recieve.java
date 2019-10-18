@@ -76,7 +76,7 @@ public class Recieve extends Main {
         }
         
         Recieve cap = null;
-        Play ply = null;
+        Transmit ply = null;
 
         try {
 
