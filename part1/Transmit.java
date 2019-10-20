@@ -14,8 +14,8 @@ import javax.sound.sampled.TargetDataLine;
 
 public class Transmit extends Main implements Runnable {
 
-    private final int packetSize = 100;
-    private final int port = 55000;
+    private final int packetSize = 256; // packet size
+    private final int port = 49990; // sender port
     private InetAddress host = null;
     private DatagramSocket socket = null;
     private ByteArrayOutputStream byteArrayOutputStream = null;
@@ -28,23 +28,22 @@ public class Transmit extends Main implements Runnable {
         try {
             int readCount;
             while (!this.stopCapture) {
-                readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
+                readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //record voice to tempBuffer
 
                 if (readCount > 0) {
                     this.byteArrayOutputStream.write(this.tempBuffer, 0, readCount);
 
                     // Construct the datagram packet
-                    DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.host,55001);
+                    DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.host,49900);
                     
                     // Send the packet
                     this.socket.send(packet);
                 }
             }
             this.byteArrayOutputStream.close();
+
         } catch (IOException e) {
-            
             e.printStackTrace();
-            //System.exit(0);
         }
     }
 
@@ -73,9 +72,9 @@ public class Transmit extends Main implements Runnable {
 
     public static void main(String[] args) {
 
-        // Check the whether the arguments are given
+        // check for the args
         if (args.length != 1) {
-            System.out.println("DatagramClient host ");
+            System.out.println("Peer IP missing!");
             return;
         }
 

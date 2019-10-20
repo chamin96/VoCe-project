@@ -1,56 +1,44 @@
 //package iteration2;
-import java.net.*;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Scanner;
 
+import java.net.*;
 
 public class Recieve extends Main {
 
-    private final int packetsize = 1000;
-    private final int port = 55000;
-    private InetAddress host = null;
+    private final int packetsize = 256;
+    private final int port = 4446;
+    private boolean stopPlay = false;
     private MulticastSocket socket = null;
-    private byte tempBuffer[] = new byte[this.packetsize];
-    private boolean stopCapture = true;
+    private InetAddress host = null;
 
-    private void captureAndSend() {
-        this.stopCapture = true;
+    @Override
+    public void run() {
+
         try {
-            int readCount;
+            // Construct the socket
+            this.socket = new MulticastSocket(this.port);
+            this.socket.joinGroup(this.host);
+            System.out.println("The server is ready");
+
+            // Create a packet
+            DatagramPacket packet = new DatagramPacket(new byte[this.packetsize], (this.packetsize));
+            this.playAudio();
+
             while (true) {
-                if (!this.stopCapture) {
-                    readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
+                if (!this.stopPlay) {
+                    try {
 
-                    if (readCount > 0) {
+                        // Receive a packet (blocking)
+                        this.socket.receive(packet);
 
-                        // Construct the datagram packet
-                        DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.host, 55001);
+                        this.getSourceDataLine().write(packet.getData(), 0, this.packetsize); //playing the audio  
+                        
+                        packet.setLength(this.packetsize);
 
-                        // Send the packet
-                        this.socket.send(packet);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void stopCapture(){
-        this.stopCapture = true;
-    }
-    
-    public void startCapture(){
-        this.stopCapture = false;
-    }
-
-    public void run() {
-        try {
-            this.socket = new MulticastSocket();
-            this.socket.joinGroup(this.host);
-            this.captureAudio();
-            this.captureAndSend();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,53 +47,16 @@ public class Recieve extends Main {
         }
     }
 
+    
     public Recieve(InetAddress host) {
         this.host = host;
     }
-
-    public Recieve() {
-        super();
+    
+    public void stopPlay() {
+        this.stopPlay = true;
     }
-
-    public static void main(String[] args) {
-
-        // Check the whether the arguments are given
-        if (args.length != 1) {
-            System.out.println("DatagramClient host ");
-            return;
-        }
-        
-        Recieve cap = null;
-        Transmit ply = null;
-
-        try {
-
-            cap = new Recieve(InetAddress.getByName(args[0]));
-            cap.start();
-
-            ply = new Transmit(InetAddress.getByName(args[0]));
-            ply.start();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        Scanner in = new Scanner(System.in);
-        boolean state = true; // playing
-        
-        while(true && (cap != null) && (ply != null)){
-            in.nextLine();
-            if(state) {
-                cap.stopCapture();
-                ply.startPlay();
-                System.out.println("Playing...");
-                state = false;
-            } else {
-                ply.stopPlay();
-                cap.startCapture();
-                System.out.println("Capturing...");
-                state = true;
-            }
-        } 
+    
+    public void startPlay() {
+        this.stopPlay = false;
     }
 }
