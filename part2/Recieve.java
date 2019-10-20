@@ -1,8 +1,7 @@
-//package iteration2;
-
 import java.net.*;
+import java.util.Arrays;
 
-public class Recieve extends Main {
+public class Recieve extends Audio {
 
     private final int packetsize = 256;
     private final int port = 4446;
@@ -10,10 +9,14 @@ public class Recieve extends Main {
     private MulticastSocket socket = null;
     private InetAddress host = null;
 
+    public Recieve(InetAddress host) {
+        this.host = host;
+    }
+
     @Override
     public void run() {
 
-        try {
+        try{
             // Construct the socket
             this.socket = new MulticastSocket(this.port);
             this.socket.joinGroup(this.host);
@@ -25,13 +28,12 @@ public class Recieve extends Main {
 
             while (true) {
                 if (!this.stopPlay) {
-                    try {
+                    try{
 
                         // Receive a packet (blocking)
                         this.socket.receive(packet);
-
-                        this.getSourceDataLine().write(packet.getData(), 0, this.packetsize); //playing the audio  
-                        
+                        this.getSourceDataLine().write(packet.getData(), 0, this.packetsize); //playing the audio
+                        System.out.println("Packet" + Arrays.toString(packet.getData()));
                         packet.setLength(this.packetsize);
 
                     } catch (Exception e) {
@@ -47,16 +49,12 @@ public class Recieve extends Main {
         }
     }
 
-    
-    public Recieve(InetAddress host) {
-        this.host = host;
-    }
-    
     public void stopPlay() {
         this.stopPlay = true;
     }
-    
+
     public void startPlay() {
         this.stopPlay = false;
     }
+
 }
