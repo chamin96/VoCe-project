@@ -11,16 +11,16 @@ public class Main {
             return;
         }
 
-        Transmit cap = null;
-        Recieve ply = null;
+        Transmitter transmitter = null;
+        Reciever reciever = null;
 
         try{
 
-            cap = new Transmit(InetAddress.getByName(args[0]));
-            cap.start();
+            transmitter = new Transmitter(InetAddress.getByName(args[0]));
+            transmitter.start();
 
-            ply = new Recieve(InetAddress.getByName(args[0]));
-            ply.start();
+            reciever = new Reciever(InetAddress.getByName(args[0]));
+            reciever.start();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -29,16 +29,16 @@ public class Main {
         Scanner in = new Scanner(System.in);
         boolean state = true; // playing
 
-        while (true && (cap != null) && (ply != null)) {
+        while ((transmitter != null) && (reciever != null)) {
             in.nextLine();
             if (state) {
-                cap.stopCapture();
-                ply.startPlay();
+                transmitter.stopCapture();
+                reciever.startPlay();
                 System.out.println("Playing...");
                 state = false;
             } else {
-                ply.stopPlay();
-                cap.startCapture();
+                reciever.stopPlay();
+                transmitter.startCapture();
                 System.out.println("Capturing...");
                 state = true;
             }
