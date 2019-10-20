@@ -1,4 +1,3 @@
-//package iteration2;
 import java.net.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -25,7 +24,7 @@ public class Recieve extends Main {
                     if (readCount > 0) {
 
                         // Construct the datagram packet
-                        DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.host, 55001);
+                        DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.host, this.port);
 
                         // Send the packet
                         this.socket.send(packet);

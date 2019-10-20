@@ -14,8 +14,8 @@ import javax.sound.sampled.TargetDataLine;
 
 public class Recieve extends Main implements Runnable {
 
-    private final int packetSize = 100;
-    private final int port = 55001;
+    private final int packetSize = 256; // packet size
+    private final int port = 49900; // reviever port
 
     public void run() {
 
@@ -34,11 +34,11 @@ public class Recieve extends Main implements Runnable {
 
                 try {
 
-                    // Receive a packet (blocking)
+                    // Receive a packet
                     socket.receive(packet);
-                  
-                    // Print the packet
-                    this.getSourceDataLine().write(packet.getData(), 0, this.packetSize); //playing the audio   
+
+                    //playing the audio
+                    this.getSourceDataLine().write(packet.getData(), 0, this.packetSize);   
 
                 } catch (Exception e) {
 
