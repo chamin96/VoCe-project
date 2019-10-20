@@ -34,7 +34,9 @@ public class Audio extends Thread {
     }
 
     public void playAudio() {
+
         try{
+
             audioFormat = getAudioFormat();     //get the audio format
 
             DataLine.Info dataLineInfo1 = new DataLine.Info(SourceDataLine.class, audioFormat);
@@ -81,4 +83,5 @@ public class Audio extends Thread {
             System.exit(0);
         }
     }
+
 }
