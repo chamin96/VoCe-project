@@ -25,12 +25,13 @@ public class Transmitter extends Audio {
      * Capture and Send Audio Packets
      */
     private void captureAndSend() {
-        this.stopCapture = true;
+        this.stopCapture = false;
         try{
             int readCount;
             while (true) {
                 if (!this.stopCapture) {
                     readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
+                    System.out.println(readCount);
 
                     if (readCount > 0) {
 
