@@ -1,5 +1,3 @@
-import test.Student;
-
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.ObjectInputStream;
@@ -11,7 +9,7 @@ public class Receiver extends Audio {
     private final int PACKET_SIZE = 256;
     private final int PORT = 4446;
     private InetAddress host;
-    private boolean stopPlay = false;
+    private boolean playState = false;
     private MulticastSocket socket = null;
 
     public Receiver(InetAddress host) {
@@ -25,13 +23,13 @@ public class Receiver extends Audio {
             // Construct the socket
             this.socket = new MulticastSocket(this.PORT);
             this.socket.joinGroup(this.host);
-            System.out.println("The server is ready");
+            System.out.println("The Receiver is ready");
             // Create a packet
             DatagramPacket packet = new DatagramPacket(new byte[this.PACKET_SIZE], (this.PACKET_SIZE));
             this.playAudio();
 
             while (true) {
-                if (!this.stopPlay) {
+                if (this.playState) {
                     try{
                         // Receive a packet (blocking)
                         this.socket.receive(packet);
@@ -67,12 +65,16 @@ public class Receiver extends Audio {
         }
     }
 
+    public boolean getPlayState() {
+        return playState;
+    }
+
     public void stopPlay() {
-        this.stopPlay = true;
+        this.playState = false;
     }
 
     public void startPlay() {
-        this.stopPlay = false;
+        this.playState = true;
     }
 
 }

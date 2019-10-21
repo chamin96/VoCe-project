@@ -26,40 +26,38 @@ public class Main {
             transmitter = new Transmitter(InetAddress.getByName(args[0]), getCurrentIPAddress());
             transmitter.start();
 
-//            receiver = new Receiver(InetAddress.getByName(args[0]));
-//            receiver.start();
+            receiver = new Receiver(InetAddress.getByName(args[0]));
+            receiver.start();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         Scanner in = new Scanner(System.in);
-        boolean state = true; // playing
-        String input = "";
+        String input;
         while ((transmitter != null) && (receiver != null)) {
             input = in.nextLine();
-//            switch (input) {
-//                case "c":
-//                    transmitter.stopCapture();
-//                    receiver.startPlay();
-//                    System.out.println("Playing...");
-//                    state = false;
-//                    break;
-//                case "p":
-//                    break;
-//                default:
-//                    break;
-//            }
-            if (state) {
-                transmitter.stopCapture();
-                receiver.startPlay();
-                System.out.println("Playing...");
-                state = false;
-            } else {
-                receiver.stopPlay();
-                transmitter.startCapture();
-                System.out.println("Capturing...");
-                state = true;
+            switch (input) {
+                case "c":
+                    transmitter.startCapture();
+                    receiver.stopPlay();
+                    System.out.println("Capture state: " + transmitter.getCaptureState());
+                    System.out.println("Play state: " + receiver.getPlayState());
+                    System.out.println("Capturing...");
+                    break;
+                case "p":
+                    receiver.startPlay();
+                    transmitter.stopCapture();
+                    System.out.println("Capture state: " + transmitter.getCaptureState());
+                    System.out.println("Play state: " + receiver.getPlayState());
+                    System.out.println("Playing...");
+                    break;
+                default:
+                    receiver.startPlay();
+                    transmitter.startCapture();
+                    System.out.println("Capture state: " + transmitter.getCaptureState());
+                    System.out.println("Play state: " + receiver.getPlayState());
+                    break;
             }
         }
     }

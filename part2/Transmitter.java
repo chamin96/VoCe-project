@@ -2,8 +2,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.*;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 
 public class Transmitter extends Audio {
 
@@ -12,7 +10,7 @@ public class Transmitter extends Audio {
     private InetAddress host;
     private String ipAddress;
     private MulticastSocket socket = null;
-    private boolean stopCapture = true;
+    private boolean captureState = false;
     private int sequenceNo = 1;
     private byte[] tempBuffer = new byte[this.PACKET_SIZE];
     private ByteArrayOutputStream byteArrayOutputStream;
@@ -27,10 +25,10 @@ public class Transmitter extends Audio {
      */
     private void captureAndSend() {
         this.byteArrayOutputStream = new ByteArrayOutputStream();
-        this.stopCapture = false;
+        this.captureState = false;
         try{
             int readCount;
-            while (!this.stopCapture) {
+            while (this.captureState) {
                 readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
 
                 if (readCount > 0) {
@@ -40,7 +38,7 @@ public class Transmitter extends Audio {
                     os.writeObject(audioPacket);
                     os.flush();
                     os.close();
-                    System.out.println("Transmitting packet : " + audioPacket.toString());
+//                    System.out.println("Transmitting packet : " + audioPacket.toString());
                     byte[] data = this.byteArrayOutputStream.toByteArray();
 
                     // Construct the datagram packet
@@ -49,7 +47,7 @@ public class Transmitter extends Audio {
                     // Send the packet
                     try{
                         this.socket.send(packet);
-                        System.out.println(Arrays.toString(packet.getData()));
+                        System.out.println("Audio Packet sent");
                     } catch (SocketException e) {
                         System.out.println("Packet send error");
                         e.printStackTrace();
@@ -70,11 +68,15 @@ public class Transmitter extends Audio {
     }
 
     public void stopCapture() {
-        this.stopCapture = true;
+        this.captureState = false;
     }
 
     public void startCapture() {
-        this.stopCapture = false;
+        this.captureState = true;
+    }
+
+    public boolean getCaptureState() {
+        return captureState;
     }
 
     /**
@@ -86,6 +88,7 @@ public class Transmitter extends Audio {
 
             this.socket = new MulticastSocket();
             this.socket.joinGroup(this.host);
+            System.out.println("The Transmitter is ready");
             this.captureAudio();
             this.captureAndSend();
 
