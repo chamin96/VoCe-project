@@ -36,26 +36,36 @@ public class Transmitter extends Audio {
                 if (readCount > 0) {
 
                     AudioPacket audioPacket = new AudioPacket(sequenceNo, PACKET_SIZE);
-//                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     ObjectOutputStream os = new ObjectOutputStream(this.byteArrayOutputStream);
                     os.writeObject(audioPacket);
                     os.flush();
                     os.close();
-//                    System.out.println("Transmitting packet : " + audioPacket.toString());
+                    System.out.println("Transmitting packet : " + audioPacket.toString());
                     byte[] data = this.byteArrayOutputStream.toByteArray();
+
                     // Construct the datagram packet
-                    DatagramPacket packet = new DatagramPacket(data, data.length, this.host, 4446);
-//                    System.out.println(Arrays.toString(packet.getData()));
+                    DatagramPacket packet = new DatagramPacket(data, PACKET_SIZE, this.host, 4446);
 
                     // Send the packet
-                    this.socket.send(packet);
-                    System.out.println("Message sent from client");
+                    try{
+                        this.socket.send(packet);
+                        System.out.println(Arrays.toString(packet.getData()));
+                    } catch (SocketException e) {
+                        System.out.println("Packet send error");
+                        e.printStackTrace();
+                    }
+                    System.out.println("Audio Message sent from transmitter");
                 }
                 sequenceNo++;
             }
-            this.byteArrayOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try{
+                this.byteArrayOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -26,8 +26,8 @@ public class Main {
             transmitter = new Transmitter(InetAddress.getByName(args[0]), getCurrentIPAddress());
             transmitter.start();
 
-            receiver = new Receiver(InetAddress.getByName(args[0]));
-            receiver.start();
+//            receiver = new Receiver(InetAddress.getByName(args[0]));
+//            receiver.start();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -35,9 +35,21 @@ public class Main {
 
         Scanner in = new Scanner(System.in);
         boolean state = true; // playing
-
+        String input = "";
         while ((transmitter != null) && (receiver != null)) {
-            in.nextLine();
+            input = in.nextLine();
+//            switch (input) {
+//                case "c":
+//                    transmitter.stopCapture();
+//                    receiver.startPlay();
+//                    System.out.println("Playing...");
+//                    state = false;
+//                    break;
+//                case "p":
+//                    break;
+//                default:
+//                    break;
+//            }
             if (state) {
                 transmitter.stopCapture();
                 receiver.startPlay();

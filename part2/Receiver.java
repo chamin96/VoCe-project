@@ -1,6 +1,7 @@
 import test.Student;
 
 import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 import java.io.ObjectInputStream;
 import java.net.*;
 import java.util.Arrays;
@@ -32,7 +33,6 @@ public class Receiver extends Audio {
             while (true) {
                 if (!this.stopPlay) {
                     try{
-
                         // Receive a packet (blocking)
                         this.socket.receive(packet);
                         byte[] data = packet.getData();
@@ -42,9 +42,9 @@ public class Receiver extends Audio {
                         try{
                             audioPacket = (AudioPacket) inputStream.readObject();
                             this.getSourceDataLine().write(packet.getData(), 0, this.PACKET_SIZE); //playing the audio
-                        } catch (ClassNotFoundException e) {
+                        } catch (ClassNotFoundException | EOFException e) {
                             e.printStackTrace();
-                        }finally {
+                        } finally {
                             inputStream.close();
                         }
                         if (audioPacket != null) {
