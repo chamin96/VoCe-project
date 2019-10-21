@@ -10,7 +10,7 @@ public class Transmitter extends Audio {
     private InetAddress host;
     private String ipAddress;
     private MulticastSocket socket = null;
-    private boolean captureState = false;
+    private boolean captureState = true;
     private int sequenceNo = 1;
     private byte[] tempBuffer = new byte[this.PACKET_SIZE];
     private ByteArrayOutputStream byteArrayOutputStream;
@@ -23,50 +23,48 @@ public class Transmitter extends Audio {
     /**
      * Capture and Send Audio Packets
      */
-    private void captureAndSend() {
-        this.byteArrayOutputStream = new ByteArrayOutputStream();
-        this.captureState = false;
-        try{
-            int readCount;
-            while (this.captureState) {
-                readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
-
-                if (readCount > 0) {
-
-                    AudioPacket audioPacket = new AudioPacket(sequenceNo, PACKET_SIZE);
-                    ObjectOutputStream os = new ObjectOutputStream(this.byteArrayOutputStream);
-                    os.writeObject(audioPacket);
-                    os.flush();
-                    os.close();
-//                    System.out.println("Transmitting packet : " + audioPacket.toString());
-                    byte[] data = this.byteArrayOutputStream.toByteArray();
-
-                    // Construct the datagram packet
-                    DatagramPacket packet = new DatagramPacket(data, PACKET_SIZE, this.host, 4446);
-
-                    // Send the packet
-                    try{
-                        this.socket.send(packet);
-                        System.out.println("Audio Packet sent");
-                    } catch (SocketException e) {
-                        System.out.println("Packet send error");
-                        e.printStackTrace();
-                    }
-                    System.out.println("Audio Message sent from transmitter");
-                }
-                sequenceNo++;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try{
-                this.byteArrayOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
+//    public void captureAndSend() {
+//        this.byteArrayOutputStream = new ByteArrayOutputStream();
+//        this.captureState = false;
+//        try{
+//            int readCount;
+//            while (this.captureState) {
+//                readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
+//
+//                if (readCount > 0) {
+//
+//                    AudioPacket audioPacket = new AudioPacket(sequenceNo, PACKET_SIZE);
+//                    ObjectOutputStream os = new ObjectOutputStream(this.byteArrayOutputStream);
+//                    os.writeObject(audioPacket);
+//                    os.flush();
+//                    os.close();
+//                    byte[] data = this.byteArrayOutputStream.toByteArray();
+//
+//                    // Construct the datagram packet
+//                    DatagramPacket packet = new DatagramPacket(data, PACKET_SIZE, this.host, 4446);
+//
+//                    // Send the packet
+//                    try{
+//                        this.socket.send(packet);
+//                        System.out.println("Audio Packet sent");
+//                    } catch (SocketException e) {
+//                        System.out.println("Packet send error");
+//                        e.printStackTrace();
+//                    }
+//                    System.out.println("Audio Message sent from transmitter");
+//                }
+//                sequenceNo++;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            try{
+//                this.byteArrayOutputStream.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
     public void stopCapture() {
         this.captureState = false;
     }
@@ -83,20 +81,68 @@ public class Transmitter extends Audio {
      * Thread implementation for transmitting
      */
     public void run() {
-
+        System.out.println("Transmitter Thread");
+        this.byteArrayOutputStream = new ByteArrayOutputStream();
         try{
-
             this.socket = new MulticastSocket();
             this.socket.joinGroup(this.host);
             System.out.println("The Transmitter is ready");
             this.captureAudio();
-            this.captureAndSend();
+            int readCount;
+            while (true) {
+                if (this.captureState) {
+                    System.out.println("TRANSMIT");
+                    readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
 
+                    if (readCount > 0) {
+                        Serializer serializer = new Serializer();
+                        AudioPacket audioPacket = new AudioPacket(sequenceNo, PACKET_SIZE);
+                        ObjectOutputStream os = new ObjectOutputStream(this.byteArrayOutputStream);
+                        os.writeObject(audioPacket);
+                        os.flush();
+                        os.close();
+//                        byte[] data = this.byteArrayOutputStream.toByteArray();
+                        byte[] data = serializer.serialize(audioPacket);
+                        DatagramPacket packet = new DatagramPacket(data, PACKET_SIZE, this.host, 4446);
+                        // Construct the datagram packet
+
+                        // Send the packet
+                        try{
+                            this.socket.send(packet);
+                            System.out.println("Audio Packet sent");
+                        } catch (SocketException e) {
+                            System.out.println("Packet send error");
+                            e.printStackTrace();
+                        }
+                        System.out.println("Audio Message sent from transmitter");
+                    }
+                    sequenceNo++;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            try{
+                this.byteArrayOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             this.socket.close();
         }
+
+//        try{
+//
+//            this.socket = new MulticastSocket();
+//            this.socket.joinGroup(this.host);
+//            System.out.println("The Transmitter is ready");
+//            this.captureAudio();
+//            this.captureAndSend();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            this.socket.close();
+//        }
 
     }
 

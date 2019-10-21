@@ -24,12 +24,13 @@ public class Receiver extends Audio {
             this.socket = new MulticastSocket(this.PORT);
             this.socket.joinGroup(this.host);
             System.out.println("The Receiver is ready");
+            System.out.println(this.getAudioFormat());
             // Create a packet
             DatagramPacket packet = new DatagramPacket(new byte[this.PACKET_SIZE], (this.PACKET_SIZE));
             this.playAudio();
-
             while (true) {
                 if (this.playState) {
+                    System.out.println("RECEIVE");
                     try{
                         // Receive a packet (blocking)
                         this.socket.receive(packet);
@@ -39,7 +40,7 @@ public class Receiver extends Audio {
                         AudioPacket audioPacket = null;
                         try{
                             audioPacket = (AudioPacket) inputStream.readObject();
-                            this.getSourceDataLine().write(audioPacket.getAudioData(), 0, this.PACKET_SIZE); //playing the audio
+                            this.getSourceDataLine().write(audioPacket.getAudioData(), 0, this.PACKET_SIZE / 2); //playing the audio
                         } catch (ClassNotFoundException | EOFException e) {
                             e.printStackTrace();
                         } finally {

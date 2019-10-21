@@ -39,18 +39,18 @@ public class Main {
             input = in.nextLine();
             switch (input) {
                 case "c":
-                    transmitter.startCapture();
                     receiver.stopPlay();
+                    transmitter.startCapture();
                     System.out.println("Capture state: " + transmitter.getCaptureState());
                     System.out.println("Play state: " + receiver.getPlayState());
-                    System.out.println("Capturing...");
+//                    System.out.println("Capturing...");
                     break;
                 case "p":
-                    receiver.startPlay();
                     transmitter.stopCapture();
+                    receiver.startPlay();
                     System.out.println("Capture state: " + transmitter.getCaptureState());
                     System.out.println("Play state: " + receiver.getPlayState());
-                    System.out.println("Playing...");
+//                    System.out.println("Playing...");
                     break;
                 default:
                     receiver.startPlay();
@@ -59,13 +59,14 @@ public class Main {
                     System.out.println("Play state: " + receiver.getPlayState());
                     break;
             }
+            System.out.println(transmitter.isAlive());
+            System.out.println(receiver.isAlive());
         }
     }
 
     /**
      * Get Current IP Address
      * Select interface for ip
-     * TODO : Implement this
      *
      * @return [String] Current/Host IP address
      */
