@@ -39,7 +39,7 @@ public class Receiver extends Audio {
                         AudioPacket audioPacket = null;
                         try{
                             audioPacket = (AudioPacket) inputStream.readObject();
-                            this.getSourceDataLine().write(packet.getData(), 0, this.PACKET_SIZE); //playing the audio
+                            this.getSourceDataLine().write(audioPacket.getAudioData(), 0, this.PACKET_SIZE); //playing the audio
                         } catch (ClassNotFoundException | EOFException e) {
                             e.printStackTrace();
                         } finally {
