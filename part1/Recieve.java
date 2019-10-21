@@ -16,6 +16,11 @@ public class Recieve extends Main implements Runnable {
 
     private final int packetSize = 256; // packet size
     private final int port = 49900; // reviever port
+    public static int countRec = 0;
+
+    public int getRcvCount(){
+        return countRec;
+    }
 
     public void run() {
 
@@ -36,6 +41,7 @@ public class Recieve extends Main implements Runnable {
 
                     // Receive a packet
                     socket.receive(packet);
+                    // countRec++;
 
                     //playing the audio
                     this.getSourceDataLine().write(packet.getData(), 0, this.packetSize);   

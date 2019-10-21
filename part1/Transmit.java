@@ -1,4 +1,6 @@
 import java.net.*;
+import java.util.TimerTask;
+import java.util.Timer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import javax.sound.sampled.AudioFormat;
@@ -21,6 +23,7 @@ public class Transmit extends Main implements Runnable {
     private ByteArrayOutputStream byteArrayOutputStream = null;
     private byte tempBuffer[] = new byte[this.packetSize];
     private boolean stopCapture = false;
+    public static int countSent = 0;
 
     private void captureAndTransmit() {
         this.byteArrayOutputStream = new ByteArrayOutputStream();
@@ -28,16 +31,21 @@ public class Transmit extends Main implements Runnable {
         try {
             int readCount;
             while (!this.stopCapture) {
-                readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //record voice to tempBuffer
+                readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length); // record voice to
+                                                                                                  // tempBuffer
 
                 if (readCount > 0) {
                     this.byteArrayOutputStream.write(this.tempBuffer, 0, readCount);
 
                     // Construct the datagram packet
-                    DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.host,49900);
-                    
+                    DatagramPacket packet = new DatagramPacket(this.tempBuffer, this.tempBuffer.length, this.host,
+                            49900);
+
                     // Send the packet
                     this.socket.send(packet);
+
+                    // countSent++;
+                    // System.out.println(packet.getLength());
                 }
             }
             this.byteArrayOutputStream.close();
@@ -46,6 +54,12 @@ public class Transmit extends Main implements Runnable {
             e.printStackTrace();
         }
     }
+
+    public int getSentCount(){
+        return countSent;
+    }
+
+
 
     public void run() {
         try {
@@ -80,14 +94,20 @@ public class Transmit extends Main implements Runnable {
 
         try {
 
-            Thread cap = new Thread(new Transmit(InetAddress.getByName(args[0])));
-            cap.start();
+            Thread tr = new Thread(new Transmit(InetAddress.getByName(args[0])));
+            tr.start();
 
-            Thread ply = new Thread(new Recieve());
-            ply.start();
+            Thread rcv = new Thread(new Recieve());
+            rcv.start();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // PrintPacketInfo timerTask = new PrintPacketInfo();
+        // //running timer task as daemon thread
+        // Timer timer = new Timer(true);
+        // timer.scheduleAtFixedRate(timerTask, 0, 60*1000);
+        
     }
 }
