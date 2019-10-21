@@ -34,7 +34,7 @@ public class Audio extends Thread {
     }
 
     public void playAudio() {
-
+        System.out.println("Play");
         try{
 
             audioFormat = getAudioFormat();     //get the audio format
@@ -56,6 +56,7 @@ public class Audio extends Thread {
     }
 
     public synchronized void captureAudio() {
+        System.out.println("Capture ");
         try{
             Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();    //get available mixers
             System.out.println("Available mixers:");

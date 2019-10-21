@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class Receiver extends Audio {
 
-    private final int PACKET_SIZE = 512;
+    private final int PACKET_SIZE = 256;
     private final int PORT = 4446;
     private InetAddress host;
     private boolean stopPlay = false;
@@ -19,7 +19,7 @@ public class Receiver extends Audio {
 
     @Override
     public void run() {
-
+        System.out.println("Receiver thread");
         try{
             // Construct the socket
             this.socket = new MulticastSocket(this.PORT);
@@ -44,6 +44,8 @@ public class Receiver extends Audio {
                             this.getSourceDataLine().write(packet.getData(), 0, this.PACKET_SIZE); //playing the audio
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
+                        }finally {
+                            inputStream.close();
                         }
                         if (audioPacket != null) {
                             System.out.println("Receiving Packet : " + audioPacket.toString());
