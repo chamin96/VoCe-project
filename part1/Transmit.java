@@ -55,11 +55,9 @@ public class Transmit extends Main implements Runnable {
         }
     }
 
-    public int getSentCount(){
+    public int getSentCount() {
         return countSent;
     }
-
-
 
     public void run() {
         try {
@@ -108,6 +106,6 @@ public class Transmit extends Main implements Runnable {
         // //running timer task as daemon thread
         // Timer timer = new Timer(true);
         // timer.scheduleAtFixedRate(timerTask, 0, 60*1000);
-        
+
     }
 }
