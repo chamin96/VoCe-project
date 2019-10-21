@@ -1,7 +1,6 @@
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.*;
 
 public class Main {
@@ -20,15 +19,15 @@ public class Main {
         }
 
         Transmitter transmitter = null;
-        Reciever reciever = null;
+        Receiver receiver = null;
 
         try{
 
             transmitter = new Transmitter(InetAddress.getByName(args[0]), getCurrentIPAddress());
             transmitter.start();
 
-            reciever = new Reciever(InetAddress.getByName(args[0]));
-            reciever.start();
+            receiver = new Receiver(InetAddress.getByName(args[0]));
+            receiver.start();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,15 +36,15 @@ public class Main {
         Scanner in = new Scanner(System.in);
         boolean state = true; // playing
 
-        while ((transmitter != null) && (reciever != null)) {
+        while ((transmitter != null) && (receiver != null)) {
             in.nextLine();
             if (state) {
                 transmitter.stopCapture();
-                reciever.startPlay();
+                receiver.startPlay();
                 System.out.println("Playing...");
                 state = false;
             } else {
-                reciever.stopPlay();
+                receiver.stopPlay();
                 transmitter.startCapture();
                 System.out.println("Capturing...");
                 state = true;
@@ -57,6 +56,7 @@ public class Main {
      * Get Current IP Address
      * Select interface for ip
      * TODO : Implement this
+     *
      * @return [String] Current/Host IP address
      */
     public static String getCurrentIPAddress() {
@@ -70,11 +70,11 @@ public class Main {
             Scanner scanner = new Scanner(System.in);
             String input = "";
             List<String> networkList = new ArrayList<>();
-            for (NetworkInterface networkInterface: networkInterfaceList) {
+            for (NetworkInterface networkInterface : networkInterfaceList) {
                 networkList.add(networkInterface.getName());
                 System.out.println(networkInterface.getName());
             }
-            while (!networkList.contains(input)){
+            while (!networkList.contains(input)) {
                 System.out.print("Please select a valid interface : ");
                 input = scanner.nextLine();
             }

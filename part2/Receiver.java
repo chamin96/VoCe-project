@@ -1,15 +1,19 @@
+import test.Student;
+
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 import java.net.*;
 import java.util.Arrays;
 
-public class Reciever extends Audio {
+public class Receiver extends Audio {
 
-    private final int PACKET_SIZE = 256;
+    private final int PACKET_SIZE = 512;
     private final int PORT = 4446;
     private InetAddress host;
     private boolean stopPlay = false;
     private MulticastSocket socket = null;
 
-    public Reciever(InetAddress host) {
+    public Receiver(InetAddress host) {
         this.host = host;
     }
 
@@ -31,8 +35,21 @@ public class Reciever extends Audio {
 
                         // Receive a packet (blocking)
                         this.socket.receive(packet);
-                        this.getSourceDataLine().write(packet.getData(), 0, this.PACKET_SIZE); //playing the audio
-                        System.out.println("Packet" + Arrays.toString(packet.getData()));
+                        byte[] data = packet.getData();
+                        ByteArrayInputStream in = new ByteArrayInputStream(data);
+                        ObjectInputStream inputStream = new ObjectInputStream(in);
+                        AudioPacket audioPacket = null;
+                        try{
+                            audioPacket = (AudioPacket) inputStream.readObject();
+                            this.getSourceDataLine().write(packet.getData(), 0, this.PACKET_SIZE); //playing the audio
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        if (audioPacket != null) {
+                            System.out.println("Receiving Packet : " + audioPacket.toString());
+                        } else {
+                            System.out.println("Cannot serialize Packet : " + Arrays.toString(packet.getData()));
+                        }
                         packet.setLength(this.PACKET_SIZE);
 
                     } catch (Exception e) {

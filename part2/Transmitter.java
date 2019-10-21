@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 public class Transmitter extends Audio {
 
-    private final int PACKET_SIZE = 256;
+    private final int PACKET_SIZE = 512;
     private final int PORT = 4445;
     private InetAddress host;
     private String ipAddress;
@@ -38,6 +38,7 @@ public class Transmitter extends Audio {
                         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                         ObjectOutputStream os = new ObjectOutputStream(outputStream);
                         os.writeObject(audioPacket);
+                        System.out.println("Transmitting packet : " + audioPacket.toString());
                         byte[] data = outputStream.toByteArray();
                         // Construct the datagram packet
                         DatagramPacket packet = new DatagramPacket(data, data.length, this.host, 4446);
