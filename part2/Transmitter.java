@@ -15,6 +15,7 @@ public class Transmitter extends Audio {
     private boolean stopCapture = true;
     private int sequenceNo = 1;
     private byte[] tempBuffer = new byte[this.PACKET_SIZE];
+    private ByteArrayOutputStream byteArrayOutputStream;
 
     public Transmitter(InetAddress host, String ipAddress) {
         this.host = host;
@@ -25,32 +26,32 @@ public class Transmitter extends Audio {
      * Capture and Send Audio Packets
      */
     private void captureAndSend() {
-        this.stopCapture = true;
+        this.byteArrayOutputStream = new ByteArrayOutputStream();
+        this.stopCapture = false;
         try{
             int readCount;
-            while (true) {
-                if (!this.stopCapture) {
-                    readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
+            while (!this.stopCapture) {
+                readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
 
-                    if (readCount > 0) {
+                if (readCount > 0) {
 
-                        AudioPacket audioPacket = new AudioPacket(ipAddress, host.getHostAddress(), sequenceNo, LocalDateTime.now(), PACKET_SIZE);
-                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                        ObjectOutputStream os = new ObjectOutputStream(outputStream);
-                        os.writeObject(audioPacket);
-                        System.out.println("Transmitting packet : " + audioPacket.toString());
-                        byte[] data = outputStream.toByteArray();
-                        // Construct the datagram packet
-                        DatagramPacket packet = new DatagramPacket(data, data.length, this.host, 4446);
-                        System.out.println(Arrays.toString(packet.getData()));
+                    AudioPacket audioPacket = new AudioPacket(ipAddress, host.getHostAddress(), sequenceNo, LocalDateTime.now(), PACKET_SIZE);
+//                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    ObjectOutputStream os = new ObjectOutputStream(this.byteArrayOutputStream);
+                    os.writeObject(audioPacket);
+                    System.out.println("Transmitting packet : " + audioPacket.toString());
+                    byte[] data = this.byteArrayOutputStream.toByteArray();
+                    // Construct the datagram packet
+                    DatagramPacket packet = new DatagramPacket(data, data.length, this.host, 4446);
+                    System.out.println(Arrays.toString(packet.getData()));
 
-                        // Send the packet
-                        this.socket.send(packet);
-                        System.out.println("Message sent from client");
-                    }
+                    // Send the packet
+                    this.socket.send(packet);
+                    System.out.println("Message sent from client");
                 }
                 sequenceNo++;
             }
+            this.byteArrayOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
