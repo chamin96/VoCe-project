@@ -3,16 +3,6 @@ import java.util.TimerTask;
 import java.util.Timer;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.Line;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.Mixer;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.TargetDataLine;
 
 public class Transmit extends Main implements Runnable {
 
@@ -95,8 +85,8 @@ public class Transmit extends Main implements Runnable {
             Thread tr = new Thread(new Transmit(InetAddress.getByName(args[0])));
             tr.start();
 
-            Thread rcv = new Thread(new Recieve());
-            rcv.start();
+            Thread ply = new Thread(new Receive());
+            ply.start();
 
         } catch (Exception e) {
             e.printStackTrace();
