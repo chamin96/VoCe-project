@@ -12,7 +12,7 @@ import javax.sound.sampled.Mixer;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
-public class Recieve extends Main implements Runnable {
+public class Receive extends Main implements Runnable {
 
     private final int packetSize = 256; // packet size
     private final int port = 49900; // reviever port
