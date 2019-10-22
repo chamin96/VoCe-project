@@ -6,8 +6,9 @@ import java.time.LocalDateTime;
 
 public class AudioPacket implements Serializable {
 
-    private int sequenceNo;
-    private byte[] audioData;
+    private static final long serialVersionUID = 5958167576419296255L;
+    int sequenceNo;
+    byte[] audioData;
 
     public AudioPacket(int sequenceNo, int size) {
         this.sequenceNo = sequenceNo;
@@ -40,7 +41,6 @@ public class AudioPacket implements Serializable {
 
     @Override
     public String toString() {
-        return "Timestamp : " + LocalDateTime.now() +
-               " SequenceNo : " + this.sequenceNo;
+        return "Timestamp : " + LocalDateTime.now() + " SequenceNo : " + this.sequenceNo;
     }
 }

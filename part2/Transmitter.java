@@ -91,7 +91,7 @@ public class Transmitter extends Audio {
             int readCount;
             while (true) {
                 if (this.captureState) {
-                    System.out.println("TRANSMIT");
+//                    System.out.println("TRANSMIT");
                     readCount = getTargetDataLine().read(this.tempBuffer, 0, this.tempBuffer.length);  //capture sound into tempBuffer
 
                     if (readCount > 0) {
@@ -114,7 +114,7 @@ public class Transmitter extends Audio {
                             System.out.println("Packet send error");
                             e.printStackTrace();
                         }
-                        System.out.println("Audio Message sent from transmitter");
+//                        System.out.println("Audio Message sent from transmitter");
                     }
                     sequenceNo++;
                 }

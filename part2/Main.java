@@ -24,10 +24,10 @@ public class Main {
         try{
 
             transmitter = new Transmitter(InetAddress.getByName(args[0]), getCurrentIPAddress());
-            transmitter.start();
+//            transmitter.start();
 
             receiver = new Receiver(InetAddress.getByName(args[0]));
-            receiver.start();
+//            receiver.start();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -41,6 +41,13 @@ public class Main {
                 case "c":
                     receiver.stopPlay();
                     transmitter.startCapture();
+                    transmitter.start();
+                    try{
+                        receiver.wait();
+                    } catch (InterruptedException e) {
+                        System.out.println("RECV wait error");
+                        e.printStackTrace();
+                    }
                     System.out.println("Capture state: " + transmitter.getCaptureState());
                     System.out.println("Play state: " + receiver.getPlayState());
 //                    System.out.println("Capturing...");
@@ -48,6 +55,13 @@ public class Main {
                 case "p":
                     transmitter.stopCapture();
                     receiver.startPlay();
+                    receiver.start();
+                    try{
+                        transmitter.wait();
+                    } catch (InterruptedException e) {
+                        System.out.println("TRANS wait error");
+                        e.printStackTrace();
+                    }
                     System.out.println("Capture state: " + transmitter.getCaptureState());
                     System.out.println("Play state: " + receiver.getPlayState());
 //                    System.out.println("Playing...");
