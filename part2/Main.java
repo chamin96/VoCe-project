@@ -34,28 +34,39 @@ public class Main {
         }
 
         Scanner in = new Scanner(System.in);
-        boolean state = true; // playing
-
+        String input;
         while ((transmitter != null) && (receiver != null)) {
-            in.nextLine();
-            if (state) {
-                transmitter.stopCapture();
-                receiver.startPlay();
-                System.out.println("Playing...");
-                state = false;
-            } else {
-                receiver.stopPlay();
-                transmitter.startCapture();
-                System.out.println("Capturing...");
-                state = true;
+            input = in.nextLine();
+            switch (input) {
+                case "c":
+                    receiver.stopPlay();
+                    transmitter.startCapture();
+                    System.out.println("Capture state: " + transmitter.getCaptureState());
+                    System.out.println("Play state: " + receiver.getPlayState());
+                    System.out.println("Capturing...");
+                    break;
+                case "p":
+                    transmitter.stopCapture();
+                    receiver.startPlay();
+                    System.out.println("Capture state: " + transmitter.getCaptureState());
+                    System.out.println("Play state: " + receiver.getPlayState());
+                    System.out.println("Playing...");
+                    break;
+                default:
+                    receiver.startPlay();
+                    transmitter.startCapture();
+                    System.out.println("Capture state: " + transmitter.getCaptureState());
+                    System.out.println("Play state: " + receiver.getPlayState());
+                    break;
             }
+            System.out.println(transmitter.isAlive());
+            System.out.println(receiver.isAlive());
         }
     }
 
     /**
      * Get Current IP Address
      * Select interface for ip
-     * TODO : Implement this
      *
      * @return [String] Current/Host IP address
      */

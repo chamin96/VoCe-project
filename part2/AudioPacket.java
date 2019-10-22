@@ -6,17 +6,12 @@ import java.time.LocalDateTime;
 
 public class AudioPacket implements Serializable {
 
-    private String from;
-    private String to;
-    private int sequenceNo;
-    private LocalDateTime timestamp;
-    private byte[] audioData;
+    private static final long serialVersionUID = 5958167576419296255L;
+    int sequenceNo;
+    byte[] audioData;
 
-    public AudioPacket(String from, String to, int sequenceNo, LocalDateTime timestamp, int size) {
-        this.from = from;
-        this.to = to;
+    public AudioPacket(int sequenceNo, int size) {
         this.sequenceNo = sequenceNo;
-        this.timestamp = timestamp;
         audioData = new byte[size];
     }
 
@@ -28,36 +23,12 @@ public class AudioPacket implements Serializable {
         in.defaultReadObject();
     }
 
-    public String getFrom() {
-        return from;
-    }
-
-    public void setFrom(String from) {
-        this.from = from;
-    }
-
-    public String getTo() {
-        return to;
-    }
-
-    public void setTo(String to) {
-        this.to = to;
-    }
-
     public int getSequenceNo() {
         return sequenceNo;
     }
 
     public void setSequenceNo(int sequenceNo) {
         this.sequenceNo = sequenceNo;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
     }
 
     public byte[] getAudioData() {
@@ -70,9 +41,6 @@ public class AudioPacket implements Serializable {
 
     @Override
     public String toString() {
-        return "Timestamp : " + this.timestamp +
-               " SequenceNo : " + this.sequenceNo +
-               " From : " + this.from +
-               " To : " + this.to;
+        return "Timestamp : " + LocalDateTime.now() + " SequenceNo : " + this.sequenceNo;
     }
 }

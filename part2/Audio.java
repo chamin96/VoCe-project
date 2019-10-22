@@ -34,7 +34,6 @@ public class Audio extends Thread {
     }
 
     public void playAudio() {
-
         try{
 
             audioFormat = getAudioFormat();     //get the audio format
@@ -47,6 +46,7 @@ public class Audio extends Thread {
             //Setting the maximum volume
             FloatControl control = (FloatControl) sourceDataLine.getControl(FloatControl.Type.MASTER_GAIN);
             control.setValue(control.getMaximum() / 2);
+            System.out.println("Play");
 
         } catch (LineUnavailableException e) {
             e.printStackTrace();
@@ -56,6 +56,7 @@ public class Audio extends Thread {
     }
 
     public synchronized void captureAudio() {
+        System.out.println("Capture ");
         try{
             Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();    //get available mixers
             System.out.println("Available mixers:");
