@@ -2,6 +2,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.*;
+import java.util.Arrays;
 
 public class Transmitter extends Audio {
 
@@ -103,13 +104,14 @@ public class Transmitter extends Audio {
                         os.close();
 //                        byte[] data = this.byteArrayOutputStream.toByteArray();
                         byte[] data = serializer.serialize(audioPacket);
-                        DatagramPacket packet = new DatagramPacket(data, PACKET_SIZE, this.host, 4446);
+                        System.out.println(Arrays.toString(data));
+                        DatagramPacket packet = new DatagramPacket(data, data.length, this.host, 4446);
                         // Construct the datagram packet
 
                         // Send the packet
                         try{
                             this.socket.send(packet);
-                            System.out.println("Audio Packet sent");
+//                            System.out.println("Audio Packet sent");
                         } catch (SocketException e) {
                             System.out.println("Packet send error");
                             e.printStackTrace();

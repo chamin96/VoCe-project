@@ -7,7 +7,7 @@ import java.util.Arrays;
 public class Receiver extends Audio {
 
     private static int count = 0;
-    private final int PACKET_SIZE = 256;
+    private final int PACKET_SIZE = 512;
     private final int PORT = 4446;
     private InetAddress host;
     private boolean playState = true;
@@ -24,7 +24,7 @@ public class Receiver extends Audio {
         System.out.println("Receiver thread");
         try{
             // Construct the socket
-//            this.socket = new MulticastSocket(this.PORT);
+            this.socket = new MulticastSocket(this.PORT);
 //            this.socket.joinGroup(this.host);
             System.out.println("The Receiver is ready");
             System.out.println(this.getAudioFormat());
@@ -96,7 +96,7 @@ public class Receiver extends Audio {
 
                 try{
                     AudioPacket audioPacket = (AudioPacket) objectInputStream.readObject();
-
+                    System.out.println(audioPacket.getSequenceNo());
                     int val = audioPacket.getSequenceNo() - count;
 
                     if (val > 1) {
